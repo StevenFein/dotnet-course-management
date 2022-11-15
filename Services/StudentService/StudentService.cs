@@ -30,6 +30,23 @@ namespace dotnet_course_management.Services.StudentService
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse<List<GetStudentDto>>> DeleteStudent(int id)
+        {
+            ServiceResponse<List<GetStudentDto>> response = new ServiceResponse<List<GetStudentDto>>();
+            try
+            {
+            Student student = students.First(c => c.Id == id);
+            students.Remove(student);
+            response.Data = students.Select(c => _mapper.Map<GetStudentDto>(c)).ToList();
+            }catch(Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+            
+            return response;
+        }
+
         public async Task<ServiceResponse<List<GetStudentDto>>> GetAllStudents()
         {
             return new ServiceResponse<List<GetStudentDto>> { Data = students.Select(c => _mapper.Map<GetStudentDto>(c)).ToList() };
@@ -41,6 +58,25 @@ namespace dotnet_course_management.Services.StudentService
             var student = students.FirstOrDefault(c => c.Id == id);
             serviceResponse.Data = _mapper.Map<GetStudentDto>(student);
             return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<GetStudentDto>> UpdateStudent(UpdateStudentDto updatedStudent)
+        {
+            ServiceResponse<GetStudentDto> response = new ServiceResponse<GetStudentDto>();
+            try
+            {
+            Student student = students.FirstOrDefault(c => c.Id == updatedStudent.Id);
+            student.FirstName = updatedStudent.FirstName;
+            student.LastName = updatedStudent.LastName;
+
+            response.Data = _mapper.Map<GetStudentDto>(student);
+            }catch(Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+            
+            return response;
         }
     }
 }
