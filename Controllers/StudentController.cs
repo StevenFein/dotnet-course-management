@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using dotnet_course_management.Models;
 using dotnet_course_management.Services.StudentService;
+using dotnet_course_management.Dtos.Student;
 
 namespace dotnet_course_management.Controllers
 {
@@ -20,18 +21,18 @@ namespace dotnet_course_management.Controllers
             
         }
         [HttpGet("GetAllStudents")]
-        public async Task<ActionResult<ServiceResponse<List<Student>>>> Get()
+        public async Task<ActionResult<ServiceResponse<List<GetStudentDto>>>> Get()
         {
             return Ok(await _studentService.GetAllStudents());
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ServiceResponse<Student>>> GetSingle(int id)
+        public async Task<ActionResult<ServiceResponse<GetStudentDto>>> GetSingle(int id)
         {
             return Ok(await _studentService.GetStudentById(id));
         }
         [HttpPost]
-        public async Task<ActionResult<ServiceResponse<List<Student>>>> AddStudent(Student newStudent)
+        public async Task<ActionResult<ServiceResponse<List<GetStudentDto>>>> AddStudent(AddStudentDto newStudent)
         {
             return Ok(await _studentService.AddStudent(newStudent));
         }
