@@ -9,6 +9,8 @@ namespace dotnet_course_management.Models
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
+        public Student President { get; set; }
+        public List<Student> Students { get; set; }
         
     }
 }

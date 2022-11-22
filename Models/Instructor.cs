@@ -10,6 +10,7 @@ namespace dotnet_course_management.Models
         public int Id { get; set; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
+        public List<Section> Sections { get; set; }
         
     }
 }
