@@ -1,3 +1,4 @@
+using dotnet_course_management.Services.CourseService;
 using dotnet_course_management.Services.StudentService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<ICourseService, CourseService>();
 
 var app = builder.Build();
 
