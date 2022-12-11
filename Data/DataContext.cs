@@ -11,5 +11,6 @@ namespace dotnet_course_management.Data
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
         public DbSet<Course> Courses => Set<Course>();
+        public DbSet<Student> Students => Set<Student>();
     }
 }
