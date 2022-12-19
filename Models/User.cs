@@ -11,5 +11,7 @@ namespace dotnet_course_management.Models
         public string UserName { get; set; }
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
+        public List<Course> Courses { get; set; }
+        public List<Student> Students { get; set; }
     }
 }

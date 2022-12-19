@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using dotnet_course_management.Data;
+using dotnet_course_management.Dtos.Course;
 using dotnet_course_management.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,18 +26,39 @@ namespace dotnet_course_management.Controllers
         {
             return Ok(await _context.Courses.ToListAsync());
         }
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<List<Course>>> GetUsersCourses(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if(user == null){
+                return NotFound();
+            }
+            
+            return Ok(await _context.Courses.Where(c => c.UserId == userId).ToListAsync());
+        }
 
         [HttpPost("CreateCourse")]
-        public async Task<ActionResult<List<Course>>> CreateCourse(Course course)
+        public async Task<ActionResult<List<Course>>> CreateCourse(AddCourseDto courseDto)
         {
-            _context.Courses.Add(course);
+            var user = await _context.Users.FindAsync(courseDto.UserId);
+            if(user == null){
+                return NotFound();
+            }
+
+            var newCourse = new Course{
+                Name = courseDto.Name,
+                Description = courseDto.Description,
+                Units = courseDto.Units,
+                User = user
+            };
+            _context.Courses.Add(newCourse);
             await _context.SaveChangesAsync();
 
-            return Ok(await _context.Courses.ToListAsync());
+            return Ok(await _context.Courses.Where(c => c.UserId == courseDto.UserId).ToListAsync());
         }
 
         [HttpPut("UpdateCourse")]
-        public async Task<ActionResult<List<Course>>> UpdateCourse(Course course)
+        public async Task<ActionResult<List<Course>>> UpdateCourse(UpdateCourseDto course)
         {
             var dbCourse = await _context.Courses.FindAsync(course.Id);
             if(dbCourse == null)
@@ -46,9 +68,10 @@ namespace dotnet_course_management.Controllers
             dbCourse.Name = course.Name;
             dbCourse.Description = course.Description;
             dbCourse.Units = course.Units;
+            dbCourse.UserId = course.UserId;
 
             await _context.SaveChangesAsync();
-            return Ok(await _context.Courses.ToListAsync());
+            return Ok(await _context.Courses.Where(c => c.UserId == course.UserId).ToListAsync());
         }
 
         [HttpDelete("{id}")]
@@ -59,11 +82,12 @@ namespace dotnet_course_management.Controllers
             {
                 return BadRequest("Course Not Found");
             }
+            var user = await _context.Users.FindAsync(dbCourse.UserId);
 
             _context.Courses.Remove(dbCourse);
             await _context.SaveChangesAsync();
 
-            return Ok(await _context.Courses.ToListAsync());
+            return Ok(await _context.Courses.Where(c => c.UserId == user.Id).ToListAsync());
         }
     }
 }

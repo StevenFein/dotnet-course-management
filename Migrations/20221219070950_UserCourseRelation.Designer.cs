@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using dotnet_course_management.Data;
 
@@ -10,9 +11,11 @@ using dotnet_course_management.Data;
 namespace dotnetcoursemanagement.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20221219070950_UserCourseRelation")]
+    partial class UserCourseRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,12 +69,7 @@ namespace dotnetcoursemanagement.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Students");
                 });
@@ -112,22 +110,9 @@ namespace dotnetcoursemanagement.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("dotnet_course_management.Models.Student", b =>
-                {
-                    b.HasOne("dotnet_course_management.Models.User", "User")
-                        .WithMany("Students")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("dotnet_course_management.Models.User", b =>
                 {
                     b.Navigation("Courses");
-
-                    b.Navigation("Students");
                 });
 #pragma warning restore 612, 618
         }
