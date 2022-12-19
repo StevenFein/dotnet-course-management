@@ -10,5 +10,6 @@ namespace dotnet_course_management.Dtos.Student
         public int Id { get; set; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
+        public int UserId { get; set; }
     }
 }

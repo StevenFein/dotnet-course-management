@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using dotnet_course_management.Data;
+using dotnet_course_management.Dtos.Student;
 using dotnet_course_management.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,18 +26,38 @@ namespace dotnet_course_management.Controllers
         {
             return Ok(await _context.Students.ToListAsync());
         }
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<List<Course>>> GetUsersStudents(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if(user == null){
+                return NotFound();
+            }
+            
+            return Ok(await _context.Students.Where(c => c.UserId == userId).ToListAsync());
+        }
 
         [HttpPost("CreateStudent")]
-        public async Task<ActionResult<List<Student>>> CreateStudent(Student student)
+        public async Task<ActionResult<List<Student>>> CreateStudent(AddStudentDto studentDto)
         {
-            _context.Students.Add(student);
+            var user = await _context.Users.FindAsync(studentDto.UserId);
+            if(user == null){
+                return NotFound();
+            }
+
+            var newStudent = new Student{
+                FirstName = studentDto.FirstName,
+                LastName = studentDto.LastName,
+                User = user
+            };
+            _context.Students.Add(newStudent);
             await _context.SaveChangesAsync();
 
-            return Ok(await _context.Students.ToListAsync());
+            return Ok(await _context.Students.Where(c => c.UserId == studentDto.UserId).ToListAsync());
         }
 
         [HttpPut("UpdateStudent")]
-        public async Task<ActionResult<List<Student>>> UpdateStudent(Student student)
+        public async Task<ActionResult<List<Student>>> UpdateStudent(UpdateStudentDto student)
         {
             var dbStudent = await _context.Students.FindAsync(student.Id);
             if(dbStudent == null)
@@ -45,9 +66,10 @@ namespace dotnet_course_management.Controllers
             }
             dbStudent.FirstName = student.FirstName;
             dbStudent.LastName = student.LastName;
+            dbStudent.UserId = student.UserId;
 
             await _context.SaveChangesAsync();
-            return Ok(await _context.Students.ToListAsync());
+            return Ok(await _context.Students.Where(c => c.UserId == student.UserId).ToListAsync());
         }
 
         [HttpDelete("{id}")]
@@ -58,11 +80,12 @@ namespace dotnet_course_management.Controllers
             {
                 return BadRequest("Student Not Found");
             }
+            var user = await _context.Users.FindAsync(dbStudent.UserId);
 
             _context.Students.Remove(dbStudent);
             await _context.SaveChangesAsync();
 
-            return Ok(await _context.Students.ToListAsync());
+            return Ok(await _context.Students.Where(c => c.UserId == user.Id).ToListAsync());
         }
     }
 
