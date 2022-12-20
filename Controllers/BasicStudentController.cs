@@ -34,7 +34,7 @@ namespace dotnet_course_management.Controllers
                 return NotFound();
             }
             
-            return Ok(await _context.Students.Where(c => c.UserId == userId).ToListAsync());
+            return Ok(await _context.Students.ToListAsync());
         }
 
         [HttpPost("CreateStudent")]
@@ -55,9 +55,42 @@ namespace dotnet_course_management.Controllers
 
             return Ok(await _context.Students.Where(c => c.UserId == studentDto.UserId).ToListAsync());
         }
+        [HttpPost("OldCreateStudent")]
+        public async Task<ActionResult<List<Student>>> OldCreateStudent(AddStudentDto studentDto)
+        {
+            var user = await _context.Users.FindAsync(1);
+            if(user == null){
+                return NotFound();
+            }
+
+            var newStudent = new Student{
+                FirstName = studentDto.FirstName,
+                LastName = studentDto.LastName,
+                User = user
+            };
+            _context.Students.Add(newStudent);
+            await _context.SaveChangesAsync();
+
+            return Ok(await _context.Students.ToListAsync());
+        }
 
         [HttpPut("UpdateStudent")]
         public async Task<ActionResult<List<Student>>> UpdateStudent(UpdateStudentDto student)
+        {
+            var dbStudent = await _context.Students.FindAsync(student.Id);
+            if(dbStudent == null)
+            {
+                return BadRequest("Student Not Found");
+            }
+            dbStudent.FirstName = student.FirstName;
+            dbStudent.LastName = student.LastName;
+            dbStudent.UserId = student.UserId;
+
+            await _context.SaveChangesAsync();
+            return Ok(await _context.Students.Where(c => c.UserId == student.UserId).ToListAsync());
+        }
+        [HttpPut("OldUpdateStudent")]
+        public async Task<ActionResult<List<Student>>> OldUpdateStudent(UpdateStudentDto student)
         {
             var dbStudent = await _context.Students.FindAsync(student.Id);
             if(dbStudent == null)

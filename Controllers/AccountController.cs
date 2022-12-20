@@ -47,7 +47,8 @@ namespace dotnet_course_management.Controllers
 
             return new UserDto{
                 UserName = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                Id = user.Id
             };
         }
 
@@ -69,7 +70,8 @@ namespace dotnet_course_management.Controllers
 
             return new UserDto{
                 UserName = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                Id = user.Id
             };
         }
 

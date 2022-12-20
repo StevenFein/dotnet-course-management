@@ -9,5 +9,6 @@ namespace dotnet_course_management.Dtos.Register
     {
         public string UserName { get; set; }
         public string Token { get; set; }
+        public int Id { get; set; }
     }
 }
